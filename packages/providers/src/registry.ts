@@ -15,8 +15,10 @@ import type {
 } from './types';
 import { ClaudeProvider } from './claude/provider';
 import { CodexProvider } from './codex/provider';
+import { AiHubProvider } from './aihub/provider';
 import { CLAUDE_CAPABILITIES } from './claude/capabilities';
 import { CODEX_CAPABILITIES } from './codex/capabilities';
+import { AIHUB_CAPABILITIES } from './aihub/capabilities';
 import { UnknownProviderError } from './errors';
 import { createLogger } from '@archon/paths';
 
@@ -127,6 +129,18 @@ export function registerBuiltinProviders(): void {
         return (
           !claudeAliases.includes(model) && !model.startsWith('claude-') && model !== 'inherit'
         );
+      },
+      builtIn: true,
+    },
+    {
+      id: 'aihub',
+      displayName: 'AI Hub (adesso)',
+      factory: () => new AiHubProvider(),
+      capabilities: AIHUB_CAPABILITIES,
+      isModelCompatible: (model: string): boolean => {
+        // AI Hub routes Claude models — same compatibility as Claude provider
+        const aliases = ['sonnet', 'opus', 'haiku'];
+        return aliases.includes(model) || model.startsWith('claude-') || model === 'inherit';
       },
       builtIn: true,
     },

@@ -6,7 +6,7 @@
  * - Can answer directly or invoke workflows
  * - Does NOT require a project to be selected before starting a conversation
  */
-import { existsSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 import { createLogger } from '@archon/paths';
 import type {
   IPlatformAdapter,
@@ -798,6 +798,8 @@ export async function handleMessage(
       workflowContext
     );
     const cwd = getArchonWorkspacesPath();
+    // Ensure the CWD exists — Claude Code subprocess hangs silently on non-existent cwd
+    mkdirSync(cwd, { recursive: true });
 
     // 4. Update activity and get/create session
     await db.touchConversation(conversation.id);

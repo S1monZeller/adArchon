@@ -35,10 +35,12 @@ export { UnknownProviderError } from './errors';
 // Provider classes
 export { ClaudeProvider } from './claude/provider';
 export { CodexProvider } from './codex/provider';
+export { AiHubProvider } from './aihub/provider';
 
 // Config parsers
 export { parseClaudeConfig, type ClaudeProviderDefaults } from './claude/config';
 export { parseCodexConfig, type CodexProviderDefaults } from './codex/config';
+export { parseAiHubConfig, type AiHubProviderDefaults } from './aihub/config';
 
 // Utilities (needed by consumers)
 export { resetCodexSingleton } from './codex/provider';

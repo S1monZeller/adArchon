@@ -16,10 +16,16 @@
 import type {
   ClaudeProviderDefaults,
   CodexProviderDefaults,
+  AiHubProviderDefaults,
   ProviderDefaultsMap,
 } from '@archon/providers/types';
 
-export type { ClaudeProviderDefaults, CodexProviderDefaults, ProviderDefaultsMap };
+export type {
+  ClaudeProviderDefaults,
+  CodexProviderDefaults,
+  AiHubProviderDefaults,
+  ProviderDefaultsMap,
+};
 
 /**
  * Intersection type: generic ProviderDefaultsMap (any string key) with typed built-in entries.
@@ -30,12 +36,14 @@ export type { ClaudeProviderDefaults, CodexProviderDefaults, ProviderDefaultsMap
 export type AssistantDefaultsConfig = ProviderDefaultsMap & {
   claude?: ClaudeProviderDefaults;
   codex?: CodexProviderDefaults;
+  aihub?: AiHubProviderDefaults;
 };
 
 /** Required variant — built-ins always present after config merge (registerBuiltinProviders guarantees it). */
 export type AssistantDefaults = ProviderDefaultsMap & {
   claude: ClaudeProviderDefaults;
   codex: CodexProviderDefaults;
+  aihub: AiHubProviderDefaults;
 };
 
 export interface GlobalConfig {

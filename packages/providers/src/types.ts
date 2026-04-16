@@ -31,6 +31,21 @@ export interface CodexProviderDefaults {
   codexBinaryPath?: string;
 }
 
+export interface AiHubProviderDefaults {
+  [key: string]: unknown;
+  model?: string;
+  /** AI Hub API key (commercial). Env override: AIHUB_API_KEY */
+  apiKey?: string;
+  /** AI Hub sovereign/government key. Env override: AIHUB_SOVEREIGN_KEY */
+  sovereignApiKey?: string;
+  /** AI Hub base URL override. @default 'https://adesso-ai-hub.3asabc.de' */
+  baseUrl?: string;
+  /** Claude Code settingSources — controls which CLAUDE.md files are loaded. */
+  settingSources?: ('project' | 'user')[];
+  /** Absolute path to the Claude Code CLI binary (delegates to Claude under the hood). */
+  claudeBinaryPath?: string;
+}
+
 /** Generic per-provider defaults bag used by config surfaces and UI. */
 export type ProviderDefaults = Record<string, unknown>;
 

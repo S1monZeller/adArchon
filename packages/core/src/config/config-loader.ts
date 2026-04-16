@@ -56,6 +56,7 @@ function mergeAssistantDefaults(
     ...base,
     claude: { ...(base.claude ?? {}) },
     codex: { ...(base.codex ?? {}) },
+    aihub: { ...(base.aihub ?? {}) },
   };
 
   if (!overrides) return merged;
@@ -82,6 +83,9 @@ function toSafeAssistantDefaults(assistants: AssistantDefaults): SafeConfig['ass
     delete safeDefaults.additionalDirectories;
     delete safeDefaults.settingSources;
     delete safeDefaults.codexBinaryPath;
+    delete safeDefaults.claudeBinaryPath;
+    delete safeDefaults.apiKey;
+    delete safeDefaults.sovereignApiKey;
 
     safeAssistants[providerId] = safeDefaults;
   }
@@ -128,6 +132,9 @@ const DEFAULT_CONFIG_CONTENT = `# Archon Global Configuration
 #     webSearchMode: disabled
 #     additionalDirectories:
 #       - /absolute/path/to/other/repo
+#   aihub:
+#     model: claude-sonnet-4-6
+#     baseUrl: https://adesso-ai-hub.3asabc.de
 
 # Streaming mode per platform (stream or batch)
 # streaming:
@@ -233,6 +240,7 @@ function getDefaults(): MergedConfig {
   const registeredAssistants: AssistantDefaults = {
     claude: {},
     codex: {},
+    aihub: {},
   };
   for (const provider of getRegisteredProviders()) {
     if (!(provider.id in registeredAssistants)) {
