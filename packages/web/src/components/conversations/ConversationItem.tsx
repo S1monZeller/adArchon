@@ -39,6 +39,7 @@ export function ConversationItem({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const params = useParams<{ '*': string }>();
+  const currentConversationId = params['*'] ? decodeURIComponent(params['*']) : undefined;
 
   const displayName = conversation.title
     ? conversation.title.length > 30
@@ -66,8 +67,7 @@ export function ConversationItem({
         setDeleteDialogOpen(false);
         clearCachedMessages(conversation.platform_conversation_id);
         void queryClient.invalidateQueries({ queryKey: ['conversations'] });
-        const currentId = params['*'] ? decodeURIComponent(params['*']) : undefined;
-        if (currentId === conversation.platform_conversation_id) {
+        if (currentConversationId === conversation.platform_conversation_id) {
           void navigate('/chat');
         }
       })
@@ -75,7 +75,7 @@ export function ConversationItem({
         setDeleteError(err instanceof Error ? err.message : 'Failed to delete conversation');
         setDeleteDialogOpen(true);
       });
-  }, [conversation.platform_conversation_id, queryClient, navigate, params]);
+  }, [conversation.platform_conversation_id, queryClient, navigate, currentConversationId]);
 
   const handleRenameSubmit = useCallback((): void => {
     const trimmed = editValue.trim();
