@@ -4,6 +4,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ConversationResponse } from '@/lib/api';
 import { deleteConversation, updateConversation } from '@/lib/api';
+import { clearCachedMessages } from '@/lib/message-cache';
 import { cn } from '@/lib/utils';
 import {
   AlertDialog,
@@ -37,7 +38,7 @@ export function ConversationItem({
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const params = useParams<{ conversationId: string }>();
+  const params = useParams<{ '*': string }>();
 
   const displayName = conversation.title
     ? conversation.title.length > 30
@@ -63,16 +64,18 @@ export function ConversationItem({
     void deleteConversation(conversation.platform_conversation_id)
       .then(() => {
         setDeleteDialogOpen(false);
+        clearCachedMessages(conversation.platform_conversation_id);
         void queryClient.invalidateQueries({ queryKey: ['conversations'] });
-        if (params.conversationId === conversation.platform_conversation_id) {
-          void navigate('/');
+        const currentId = params['*'] ? decodeURIComponent(params['*']) : undefined;
+        if (currentId === conversation.platform_conversation_id) {
+          void navigate('/chat');
         }
       })
       .catch((err: unknown) => {
         setDeleteError(err instanceof Error ? err.message : 'Failed to delete conversation');
         setDeleteDialogOpen(true);
       });
-  }, [conversation.platform_conversation_id, queryClient, navigate, params.conversationId]);
+  }, [conversation.platform_conversation_id, queryClient, navigate, params]);
 
   const handleRenameSubmit = useCallback((): void => {
     const trimmed = editValue.trim();
