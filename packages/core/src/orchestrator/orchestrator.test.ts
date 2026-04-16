@@ -65,6 +65,24 @@ mock.module('../db/sessions', () => ({
   transitionSession: mockTransitionSession,
 }));
 
+// Workflow DB mocks
+const mockGetPausedWorkflowRun = mock(() => Promise.resolve(null));
+const mockFindResumableRunByParentConversation = mock(() => Promise.resolve(null));
+const mockUpdateWorkflowRun = mock(() => Promise.resolve());
+
+mock.module('../db/workflows', () => ({
+  getPausedWorkflowRun: mockGetPausedWorkflowRun,
+  findResumableRunByParentConversation: mockFindResumableRunByParentConversation,
+  updateWorkflowRun: mockUpdateWorkflowRun,
+}));
+
+// Message DB mocks
+const mockGetRecentWorkflowResultMessages = mock(() => Promise.resolve([]));
+
+mock.module('../db/messages', () => ({
+  getRecentWorkflowResultMessages: mockGetRecentWorkflowResultMessages,
+}));
+
 // Command handler mock
 const mockHandleCommand = mock(() =>
   Promise.resolve({ message: '', modified: false, success: true })
@@ -170,10 +188,12 @@ mock.module('@archon/workflows/utils/tool-formatter', () => ({
   formatToolCall: mock((toolName: string, _toolInput: unknown) => `🔧 ${toolName.toUpperCase()}`),
 }));
 
-// fs mock for existsSync
+// fs mock for existsSync and mkdirSync
 const mockExistsSync = mock(() => true);
+const mockMkdirSync = mock(() => undefined);
 mock.module('fs', () => ({
   existsSync: mockExistsSync,
+  mkdirSync: mockMkdirSync,
 }));
 
 // Title generator mock
@@ -284,6 +304,11 @@ function clearAllMocks(): void {
   mockBuildProjectScopedPrompt.mockClear();
   mockLoadConfig.mockClear();
   mockExistsSync.mockClear();
+  mockMkdirSync.mockClear();
+  mockGetPausedWorkflowRun.mockClear();
+  mockFindResumableRunByParentConversation.mockClear();
+  mockUpdateWorkflowRun.mockClear();
+  mockGetRecentWorkflowResultMessages.mockClear();
   mockGenerateAndSetTitle.mockClear();
   mockClient.sendQuery.mockClear();
   mockClient.getType.mockClear();
