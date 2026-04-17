@@ -13,6 +13,7 @@ interface KanbanColumnProps {
   onResume: (runId: string) => void;
   onAbandon: (runId: string) => void;
   onDelete: (runId: string) => void;
+  onApprove: (runId: string) => void;
 }
 
 export function KanbanColumn({
@@ -25,6 +26,7 @@ export function KanbanColumn({
   onResume,
   onAbandon,
   onDelete,
+  onApprove,
 }: KanbanColumnProps): React.ReactElement {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
@@ -59,6 +61,7 @@ export function KanbanColumn({
             onResume={onResume}
             onAbandon={onAbandon}
             onDelete={onDelete}
+            onApprove={onApprove}
           />
         ))}
       </div>

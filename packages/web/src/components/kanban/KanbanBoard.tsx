@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import { DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import { Workflow } from 'lucide-react';
@@ -47,7 +47,7 @@ interface PendingTransition {
 }
 
 const DIALOG_CONFIG: Record<
-  string,
+  'approve' | 'reject',
   { title: string; description: string; inputLabel: string; confirmLabel: string }
 > = {
   approve: {
@@ -76,6 +76,7 @@ export function KanbanBoard({
 }: KanbanBoardProps): React.ReactElement {
   const [invalidColumn, setInvalidColumn] = useState<string | null>(null);
   const [pendingTransition, setPendingTransition] = useState<PendingTransition | null>(null);
+  const invalidColumnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -107,9 +108,13 @@ export function KanbanBoard({
       const transition = PERMITTED.get(key);
 
       if (!transition) {
+        if (invalidColumnTimerRef.current !== null) {
+          clearTimeout(invalidColumnTimerRef.current);
+        }
         setInvalidColumn(targetStatus);
-        setTimeout(() => {
+        invalidColumnTimerRef.current = setTimeout(() => {
           setInvalidColumn(null);
+          invalidColumnTimerRef.current = null;
         }, 1000);
         return;
       }
@@ -148,8 +153,9 @@ export function KanbanBoard({
     [pendingTransition, onApprove, onReject]
   );
 
-  const dialogAction = pendingTransition?.transition.action ?? 'approve';
-  const dialogConfig = DIALOG_CONFIG[dialogAction] ?? DIALOG_CONFIG.approve;
+  const dialogAction: 'approve' | 'reject' =
+    pendingTransition?.transition.action === 'reject' ? 'reject' : 'approve';
+  const dialogConfig = DIALOG_CONFIG[dialogAction];
 
   if (isLoading) {
     return (
@@ -191,6 +197,9 @@ export function KanbanBoard({
               }}
               onDelete={(id): void => {
                 void onDelete(id);
+              }}
+              onApprove={(id): void => {
+                void onApprove(id);
               }}
             />
           ))}

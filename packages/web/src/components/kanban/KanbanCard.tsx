@@ -14,6 +14,7 @@ interface KanbanCardProps {
   onResume: (runId: string) => void;
   onAbandon: (runId: string) => void;
   onDelete: (runId: string) => void;
+  onApprove: (runId: string) => void;
 }
 
 export function KanbanCard({
@@ -22,6 +23,7 @@ export function KanbanCard({
   onResume,
   onAbandon,
   onDelete,
+  onApprove,
 }: KanbanCardProps): React.ReactElement {
   const navigate = useNavigate();
   const liveState = useWorkflowStore(state => state.workflows.get(run.id));
@@ -155,8 +157,7 @@ export function KanbanCard({
           {run.status === 'paused' && (
             <button
               onClick={(): void => {
-                // Approve via drag — button is for quick approve without comment
-                onResume(run.id);
+                onApprove(run.id);
               }}
               className="flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] text-success/80 hover:bg-success/10 hover:text-success transition-colors"
             >

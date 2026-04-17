@@ -24,7 +24,7 @@ export function KanbanPage(): React.ReactElement {
   const { data, isLoading } = useQuery({
     queryKey: ['kanbanRuns'],
     queryFn: () => listDashboardRuns({ limit: 200 }),
-    refetchInterval: 30_000,
+    refetchInterval: 5_000,
   });
 
   const runs: DashboardRunResponse[] = data?.runs ?? [];
