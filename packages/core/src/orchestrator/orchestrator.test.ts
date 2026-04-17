@@ -83,6 +83,13 @@ mock.module('../db/messages', () => ({
   getRecentWorkflowResultMessages: mockGetRecentWorkflowResultMessages,
 }));
 
+// Workflow-event DB mocks
+const mockCreateWorkflowEvent = mock(() => Promise.resolve());
+
+mock.module('../db/workflow-events', () => ({
+  createWorkflowEvent: mockCreateWorkflowEvent,
+}));
+
 // Command handler mock
 const mockHandleCommand = mock(() =>
   Promise.resolve({ message: '', modified: false, success: true })
@@ -309,6 +316,7 @@ function clearAllMocks(): void {
   mockFindResumableRunByParentConversation.mockClear();
   mockUpdateWorkflowRun.mockClear();
   mockGetRecentWorkflowResultMessages.mockClear();
+  mockCreateWorkflowEvent.mockClear();
   mockGenerateAndSetTitle.mockClear();
   mockClient.sendQuery.mockClear();
   mockClient.getType.mockClear();
