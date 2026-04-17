@@ -27,6 +27,10 @@ export function getCachedMessages(id: string): ChatMessage[] {
   return msgs ?? [];
 }
 
+export function clearCachedMessages(id: string): void {
+  messageCache.delete(id);
+}
+
 export function setCachedMessages(id: string, msgs: ChatMessage[]): void {
   // Delete first so re-insert moves it to the end (most recently used)
   messageCache.delete(id);

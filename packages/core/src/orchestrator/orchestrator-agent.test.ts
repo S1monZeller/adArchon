@@ -193,6 +193,7 @@ mock.module('@archon/git', () => ({
 
 mock.module('fs', () => ({
   existsSync: mock(() => true),
+  mkdirSync: mock(() => undefined),
 }));
 
 // ─── Import module under test (AFTER all mocks) ───────────────────────────────
