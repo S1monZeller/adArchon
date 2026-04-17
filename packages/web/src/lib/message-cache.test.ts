@@ -2,6 +2,7 @@ import { describe, test, expect, beforeEach } from 'bun:test';
 import {
   getCachedMessages,
   setCachedMessages,
+  clearCachedMessages,
   setSendInFlight,
   isSendInFlight,
 } from './message-cache';
@@ -180,6 +181,43 @@ describe('setCachedMessages', () => {
     expect(getCachedMessages(prefix + '0')).toEqual([msg0]);
     // The re-inserted entry has the new content.
     expect(getCachedMessages(prefix + '5')).toEqual([msgUpdated]);
+  });
+});
+
+// ─── clearCachedMessages ──────────────────────────────────────────────────────
+
+describe('clearCachedMessages', () => {
+  test('removes a previously stored entry', () => {
+    const id = 'clear-basic-' + Math.random();
+    setCachedMessages(id, [makeMsg('m1')]);
+    clearCachedMessages(id);
+    expect(getCachedMessages(id)).toEqual([]);
+  });
+
+  test('is a no-op for an id that was never stored', () => {
+    expect(() => clearCachedMessages('never-stored-' + Math.random())).not.toThrow();
+  });
+
+  test('does not affect other cached entries', () => {
+    const idA = 'clear-sibling-A-' + Math.random();
+    const idB = 'clear-sibling-B-' + Math.random();
+    const msgs = [makeMsg('keep')];
+    setCachedMessages(idA, [makeMsg('gone')]);
+    setCachedMessages(idB, msgs);
+
+    clearCachedMessages(idA);
+
+    expect(getCachedMessages(idA)).toEqual([]);
+    expect(getCachedMessages(idB)).toEqual(msgs);
+  });
+
+  test('after clearing, setCachedMessages can re-populate the same id', () => {
+    const id = 'clear-repopulate-' + Math.random();
+    setCachedMessages(id, [makeMsg('old')]);
+    clearCachedMessages(id);
+    const fresh = [makeMsg('new')];
+    setCachedMessages(id, fresh);
+    expect(getCachedMessages(id)).toEqual(fresh);
   });
 });
 
